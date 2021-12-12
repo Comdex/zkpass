@@ -28,6 +28,7 @@ const AccountDb = KeyedAccumulatorFactory<Field, Account>(
 );
 type AccountDb = InstanceType<typeof AccountDb>;
 
+//convert string to Field
 function packBytes(s: string): Field {
   console.assert(s.length < 32);
   let bits: Array<boolean> = [];
@@ -39,6 +40,7 @@ function packBytes(s: string): Field {
   }
   return Field.ofBits(bits);
 }
+
 class Account extends CircuitValue {
   @prop name: Field;
   @prop balance: UInt64;
@@ -233,11 +235,10 @@ export async function run() {
 
   let snappInstance: ZKPass;
   
-
-  
   const keyFunc = (v: Account): Field => {
       return v.name;
   };
+  //It looks like the API doesn't work
   let testDb = AccountDb.create(keyFunc, DataStore.Keyed.InMemory(Account, Field, keyFunc, AccountDbDepth));
   testDb.key = keyFunc;
 
