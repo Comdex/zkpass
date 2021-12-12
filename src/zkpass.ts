@@ -41,6 +41,19 @@ function packBytes(s: string): Field {
   return Field.ofBits(bits);
 }
 
+class SignatureWithName extends CircuitValue {
+  @prop signature: Signature;
+  @prop signer: PublicKey;
+  @prop name: Field;
+
+  constructor(signature: Signature, signer: PublicKey, name: Field) {
+    super();
+    this.signature = signature;
+    this.signer = signer;
+    this.name = name;
+  }
+}
+
 class Account extends CircuitValue {
   @prop name: Field;
   @prop balance: UInt64;
@@ -237,9 +250,26 @@ class ZKPass extends SmartContract {
  * @param accountDb 
  * @returns 
  */
-export function validateAuth(s: SignatureWithSigner, msg: Field[],  accountDb: AccountDb): boolean {
-  return s.signature.verify(s.signer, msg).toBoolean();
+export function validateAuth(s: SignatureWithName, msg: Field[],  accountDb: AccountDb): boolean {
+  let verifySign = s.signature.verify(s.signer, msg).toBoolean();
+  let name = s.name;
+
+  //check if name exists
+  let [account, mem ] = accountDb.get(name);
+  let exists = account.isSome.toBoolean();
+  if(!exists) {
+    throw new Error("Account not exists!");
+  }
+
+  let checkAccount = account.value.authKeyHash.equals(Poseidon.hash(s.signer.toFields())).toBoolean();
+  if(verifySign && checkAccount) {
+    return true;
+  } else {
+    return false;
+  }
+
 }
+
 
 export async function run() {
   await isReady;
