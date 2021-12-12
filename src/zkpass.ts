@@ -127,24 +127,36 @@ class ZKPass extends SmartContract {
       this.accountDbCommitment.set(accountDb.commitment());
   }
 
+  /**
+   * user could modify his/her info only by old withDrawPublicKey OR old ownerMail,
+   * but cannot by 'authPublicKey'.
+   * @param name  
+   * @param s 
+   * @param newWithDrawPublicKey 
+   * @param authPublicKey 
+   * @param ownerMail 
+   * @param accountDb 
+   */
   @method async updateAccount(
     name: Field, 
     s: SignatureWithSigner,
     newWithDrawPublicKey: PublicKey,
     authPublicKey: PublicKey,
     ownerMail: Field,
-    accountDb: AccountDb
+    accountDb: AccountDb 
   ) {
     //check data consistency
     const accountDbCommitment = await this.accountDbCommitment.get();
     accountDbCommitment.assertEquals(accountDb.commitment());
 
-    //Account modification can only be done by verifying mail and a withDraw key
-    //TODO: validate mail by https?
-
     //check if name exists
     let [account, mem ] = accountDb.get(name);
     account.isSome.assertEquals(true);
+    
+    //Account modification can only be done by verifying mail and a withDraw key
+    //TODO: validate mail by https?
+
+
 
     //check owner withDraw key
     let oriWithDrawKeyHash = Poseidon.hash(s.signer.toFields());
@@ -217,7 +229,14 @@ class ZKPass extends SmartContract {
 
 }
 
-//validate account owner
+/**
+ * Single Sign On:
+ *   Enable other websites to redirect to 'ZKPass Owner auth page' to trigger this function to get Owner's authorization
+ * @param s 
+ * @param msg 
+ * @param accountDb 
+ * @returns 
+ */
 export function validateAuth(s: SignatureWithSigner, msg: Field[],  accountDb: AccountDb): boolean {
   return s.signature.verify(s.signer, msg).toBoolean();
 }
@@ -242,7 +261,7 @@ export async function run() {
   let testDb = AccountDb.create(keyFunc, DataStore.Keyed.InMemory(Account, Field, keyFunc, AccountDbDepth));
   testDb.key = keyFunc;
 
-  
+
   // Deploys the snapp
   await Mina.transaction(account1, async () => {
       // account2 sends 1000000000 to the new snapp account
@@ -256,6 +275,8 @@ export async function run() {
   .send()
   .wait();
 
+  // Scenario ONE 
+  // user registers {'Daniel.bit' -> (['publicKey1 Hash', 'publicKey2 Hash'], 'email Hash')}
   await Mina.transaction(account1, async () => {
       // account2 sends 1000000000 to the new snapp account
       const amount = UInt64.fromNumber(1000000000);
@@ -263,21 +284,23 @@ export async function run() {
       p.balance.subInPlace(amount);
   
       snappInstance.registerAccount(
-        packBytes('Mina'), 
+        packBytes('Daniel.bit'), 
         account1.toPublicKey(),
         account1.toPublicKey(),
-        packBytes('xxx@xxx.com'),
+        packBytes('Daniel@gmail.com'),
         testDb);
     })
       .send()
       .wait();
   
+  // Scenario TWO 
+  // user A send some amounts of 'Mina' to specified userB(name is 'Daniel')
   await Mina.transaction(account1, async () => {
       // account2 sends 1000000000 to the new snapp account
       const amount = UInt64.fromNumber(1000000000);
       const sender = await Party.createSigned(account2);
   
-      snappInstance.deposit(sender, packBytes('Mina'), amount, testDb);
+      snappInstance.deposit(sender, packBytes('Daniel.bit'), amount, testDb);
       })
       .send()
       .wait();
@@ -290,4 +313,4 @@ export async function run() {
 }
 
 run();
-shutdown();
+shutdown(); 
