@@ -1,26 +1,17 @@
-# snarkyjs Workshop
+# zkPass -- DID platform based on Mina, Zero Knowledage
 
-- slides: https://hackmd.io/@mimoo/rkPI5zluY#/
+zkpass is a crypto identity dapp, it can not only be a smart contract wallet, but also even an identity authenticator. 
 
-```console
-$ git clone git@github.com:o1-labs/snarkyjs-workshop.git
-$ cd snarkyjs-workshop
-$ npm install
-$ npx tsc
-```
+You can 
+- register a account with a special `name`,
+- transfer funds to `ANYONE` by its `name`,
+- withdraw from this account, 
+- ......
 
-Make sure you have node version >= 16.4!
+**PLEASE navigate to `./demohtml/index.html` to take a look at our MVP design!!**
 
-Then you can run individual examples with:
+It protects your real wallet address from exposure (all transactions are by `name`, rather than your wallet address) and allows for a degree of anonymity in transfers. 
 
-```console
-node dist/1_exercise.js
-node dist/2_exercise.js
-...
-```
+Besides, it can be integrated into other DApps as a single sign-on.
 
-If you change an example, you have to re-run typescript first:
-
-```console
-npx tsc && node dist/1_exercise.js
-```
+And it can also be authorized by your email in the future without fear of losing your private key.
