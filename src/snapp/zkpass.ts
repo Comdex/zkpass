@@ -19,7 +19,7 @@ import {
 import {
   SignatureWithName, Account, SignatureWithSigner
 } from "./contract_type";
-import { AccountDb, testDb } from "./mock";
+import { AccountDb, checkProof, testDb } from "./mock";
 import { packBytes } from "./util";
 
 class ZKPass extends SmartContract {
@@ -42,13 +42,14 @@ class ZKPass extends SmartContract {
     ownerMail: Field,
     accountDb: AccountDb
     ) {
-      //check data consistency
+      //verify data by merkle proof
       const accountDbCommitment = await this.accountDbCommitment.get();
-      accountDbCommitment.assertEquals(accountDb.commitment());
 
       //check if name exists
-      let [{ isSome }, mem ] = accountDb.get(name);
-      isSome.assertEquals(false);
+      let [ existAccount, mem ] = accountDb.get(name);
+      existAccount.isSome.assertEquals(false);
+      checkProof(mem, accountDbCommitment, existAccount.value).assertEquals(true);
+      
       
       //init a account
       let withDrawKeyHash = Poseidon.hash(withDrawPublicKey.toFields());
@@ -84,13 +85,14 @@ class ZKPass extends SmartContract {
     ownerMail: Field,
     accountDb: AccountDb 
   ) {
-    //check data consistency
+
     const accountDbCommitment = await this.accountDbCommitment.get();
-    accountDbCommitment.assertEquals(accountDb.commitment());
 
     //check if name exists
     let [account, mem ] = accountDb.get(name);
     account.isSome.assertEquals(true);
+    checkProof(mem, accountDbCommitment, account.value).assertEquals(true);
+    
     
     //Account modification can only be done by verifying mail and a withDraw key
     //TODO: validate mail by https?
@@ -115,13 +117,12 @@ class ZKPass extends SmartContract {
       amount: UInt64, 
       accountDb: AccountDb,
   ) {
-      //check data consistency
       const accountDbCommitment = await this.accountDbCommitment.get();
-      accountDbCommitment.assertEquals(accountDb.commitment());
 
       //check if name exists
       let [receiverAccount, mem ] = accountDb.get(name);
       receiverAccount.isSome.assertEquals(true);
+      checkProof(mem, accountDbCommitment, receiverAccount.value).assertEquals(true);
 
       sender.balance.subInPlace(amount);
       this.balance.addInPlace(amount);
@@ -137,16 +138,17 @@ class ZKPass extends SmartContract {
       amount: UInt64,
       accountDb: AccountDb,
   ) {
-      //check data consistency
       const accountDbCommitment = await this.accountDbCommitment.get();
-      accountDbCommitment.assertEquals(accountDb.commitment());
 
       //check if name exists
       let [senderAccount, senderMem ] = accountDb.get(sender.name);
       senderAccount.isSome.assertEquals(true);
+      checkProof(senderMem, accountDbCommitment, senderAccount.value).assertEquals(true);
+
       let [receiverAccount, receiverMem] = accountDb.get(receiverName);
       receiverAccount.isSome.assertEquals(true);
-
+      checkProof(receiverMem, accountDbCommitment, receiverAccount.value).assertEquals(true);
+    
       senderAccount.value.balance.assertGt(amount);
 
       let senderPublicKeyHash = Poseidon.hash(sender.signer.toFields());
@@ -170,14 +172,14 @@ class ZKPass extends SmartContract {
       s: SignatureWithSigner,
       accountDb: AccountDb
   ) {
-  
-      //check data consistency
+
       const accountDbCommitment = await this.accountDbCommitment.get();
-      accountDbCommitment.assertEquals(accountDb.commitment()); 
 
       //check if name exists
       let [account, mem ] = accountDb.get(name);
       account.isSome.assertEquals(true);
+      checkProof(mem, accountDbCommitment, account.value).assertEquals(true);
+
       Circuit.asProver(() => {
         console.log("account balance: ", account.value.balance.toString());
         console.log("withdraw amount: ", amount.toString());

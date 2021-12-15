@@ -3,7 +3,7 @@ import {
     Field,
     Bool,
     UInt64,
-    Poseidon
+    Poseidon,
 } from "snarkyjs";
 import { Account } from "./contract_type";
 import { fieldToHex } from "./util";
@@ -24,6 +24,10 @@ import { fieldToHex } from "./util";
 // let testDb = AccountDb.create(keyFunc, DataStore.Keyed.InMemory(Account, Field, keyFunc, AccountDbDepth));
 // testDb.key = keyFunc;
 
+//mock checkProof
+function checkProof(proof: Field, root: Field, value: Account): Bool {
+    return proof.equals(root);
+}
 
 class AccountDb {
     data: Map<string, Account>;
@@ -32,22 +36,22 @@ class AccountDb {
       this.data = new Map<string, Account>();
     }
   
-    set(index: number, account: Account) {
+    set(proof: Field, account: Account) {
       this.data.set(fieldToHex(account.name), account);
       console.log("set account success");
     }
   
-    get(name: Field): [Optional<Account>, number] {
+    get(name: Field): [Optional<Account>, Field] {
       let acc = this.data.get(fieldToHex(name));
       console.log("get account: ", acc?.toString());
       if(acc) {
         
         let newAcc = new Account(acc.name, acc.balance, acc.withDrawKeyHash, acc.authKeyHash, acc.ownerMailHash);
-        return [new Optional(new Bool(true), newAcc), 0];
+        return [new Optional(new Bool(true), newAcc), new Field(this.data.size)];
       } else {
 
         let newAcc = new Account(Field.zero, UInt64.zero, Field.zero, Field.zero, Field.zero);
-        return [new Optional(new Bool(false), newAcc), 0];
+        return [new Optional(new Bool(false), newAcc), new Field(this.data.size)];
       }
     }
   
@@ -58,4 +62,4 @@ class AccountDb {
 
   var testDb: AccountDb = new AccountDb();
 
-  export { AccountDb, testDb };
+  export { AccountDb, checkProof, testDb };
