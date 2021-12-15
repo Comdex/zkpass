@@ -22,3 +22,11 @@ Features:
 - Be able to Be an authenticator for any senarioes needing your signature, like SSO.
 - Multiple class public keys instended for respective senario. for examples, Authorization key is intended for signature, while withdraw Public key is only for withdrawing funds from zkpass platform. So you no need worrying that some one would know your real fund wallet address.
 - In the future, social recovery of your wallet could be carried out. You will not need to worry about losing your private key.
+
+### How to run demo
+
+This is just a demo of a contract local test.
+
+```sh
+npm run exec
+```
