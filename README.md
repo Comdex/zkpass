@@ -1,4 +1,4 @@
-# zkPass -- DID platform based on Mina, Zero Knowledage
+# zkPass -- A crypto passport based on Mina, Zero Knowledage
 
 zkpass is a crypto identity dapp, it can not only be a wallet based on smart contract, but also even an identity authenticator. 
 

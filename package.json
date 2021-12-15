@@ -1,26 +1,26 @@
 {
-  "name": "snarkyjs-workshop",
+  "name": "zkpass",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "exec": "tsc && node dist/smart_contract.js"
+    "exec": "npx tsc && node --experimental-specifier-resolution=node dist/snapp/zkpass.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/o1-labs/snarkyjs-workshop.git"
+    "url": "git+https://github.com/Comdex/zkpass.git"
   },
-  "keywords": [],
+  "keywords": ["mina", "zkpass"],
   "author": "",
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/o1-labs/snarkyjs-workshop/issues"
+    "url": "https://github.com/Comdex/zkpass/issues"
   },
   "engines": {
     "node": ">=16.4.0"
   },
-  "homepage": "https://github.com/o1-labs/snarkyjs-workshop#readme",
+  "homepage": "https://github.com/Comdex/zkpass#readme",
   "dependencies": {
     "prettier": "^2.5.0",
     "snarkyjs": "^0.1.11",
