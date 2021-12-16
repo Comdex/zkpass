@@ -20,6 +20,15 @@ class SignatureWithName extends CircuitValue {
       this.signer = signer;
       this.name = name;
     }
+
+    static create(signer: PrivateKey, message: Field[], name: Field): SignatureWithName {
+      message.push(name);
+      return new SignatureWithName(
+        Signature.create(signer, message),
+        signer.toPublicKey(),
+        name
+      );
+    }
 }
 
 class Account extends CircuitValue {
@@ -45,7 +54,7 @@ class Account extends CircuitValue {
     }
 
     toString(): string {
-      return fieldToHex(this.name) + "_" + this.balance.toString();
+      return "name_hex: " + fieldToHex(this.name) + ", balance: " + this.balance.toString();
     }
   }
 

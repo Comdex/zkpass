@@ -47,16 +47,24 @@ class AccountDb {
       if(acc) {
         
         let newAcc = new Account(acc.name, acc.balance, acc.withDrawKeyHash, acc.authKeyHash, acc.ownerMailHash);
-        return [new Optional(new Bool(true), newAcc), new Field(this.data.size)];
+        return [new Optional(new Bool(true), newAcc), Poseidon.hash(new Field(this.data.size).toFields())];
       } else {
 
         let newAcc = new Account(Field.zero, UInt64.zero, Field.zero, Field.zero, Field.zero);
-        return [new Optional(new Bool(false), newAcc), new Field(this.data.size)];
+        return [new Optional(new Bool(false), newAcc), Poseidon.hash(new Field(this.data.size).toFields())];
       }
     }
   
     commitment() {
       return Poseidon.hash(new Field(this.data.size).toFields());
+    }
+
+    print() {
+      console.log("print db start");
+      this.data.forEach((v) => {
+        console.log(v.toString());
+      });
+      console.log("print db end");
     }
   }
 

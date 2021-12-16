@@ -124,6 +124,11 @@ class ZKPass extends SmartContract {
       receiverAccount.isSome.assertEquals(true);
       checkProof(mem, accountDbCommitment, receiverAccount.value).assertEquals(true);
 
+      Circuit.asProver(() => {
+        console.log("deposit> account balance: ", receiverAccount.value.balance.toString());
+        console.log("deposit> deposit amount: ", amount.toString());
+      });
+
       sender.balance.subInPlace(amount);
       this.balance.addInPlace(amount);
       receiverAccount.value.balance = receiverAccount.value.balance.add(amount);
@@ -148,14 +153,16 @@ class ZKPass extends SmartContract {
       let [receiverAccount, receiverMem] = accountDb.get(receiverName);
       receiverAccount.isSome.assertEquals(true);
       checkProof(receiverMem, accountDbCommitment, receiverAccount.value).assertEquals(true);
-    
-      senderAccount.value.balance.assertGt(amount);
+
+      senderAccount.value.balance.lt(amount).assertEquals(false);;
 
       let senderPublicKeyHash = Poseidon.hash(sender.signer.toFields());
       senderAccount.value.withDrawKeyHash.assertEquals(senderPublicKeyHash);
 
       const nonce: UInt32 = await this.nonce;
-      sender.signature.verify(sender.signer, nonce.toFields()).assertEquals(true);
+      let message = nonce.toFields();
+      message.push(sender.name);
+      sender.signature.verify(sender.signer, message).assertEquals(true);
 
       senderAccount.value.balance = senderAccount.value.balance.sub(amount);
       receiverAccount.value.balance = receiverAccount.value.balance.add(amount);
@@ -181,8 +188,8 @@ class ZKPass extends SmartContract {
       checkProof(mem, accountDbCommitment, account.value).assertEquals(true);
 
       Circuit.asProver(() => {
-        console.log("account balance: ", account.value.balance.toString());
-        console.log("withdraw amount: ", amount.toString());
+        console.log("withdraw> account balance: ", account.value.balance.toString());
+        console.log("withdraw> withdraw amount: ", amount.toString());
       });
 
       //check amount
@@ -238,12 +245,16 @@ export async function run() {
   await isReady;
 
   const Local = Mina.LocalBlockchain();
+
   Mina.setActiveInstance(Local);
   const account1 = Local.testAccounts[0].privateKey;
   const account2 = Local.testAccounts[1].privateKey;
 
+ 
+
   const snappPrivkey = PrivateKey.random();
   const snappPubkey = snappPrivkey.toPublicKey();
+
 
   let snappInstance: ZKPass;
   
@@ -289,39 +300,66 @@ export async function run() {
   // Scenario TWO 
   // user A send some amounts of 'Mina' to specified userB(name is 'Daniel')
   await Mina.transaction(account2, async () => {
-      // account2 sends 1000000000 to the new snapp account
-      const amount = UInt64.fromNumber(2000000000);
-      const sender = await Party.createSigned(account1);
+      const amount = UInt64.fromNumber(1000000000);
+      const sender = await Party.createSigned(account2);
   
       await snappInstance.deposit(sender, packBytes('Daniel.bit'), amount, testDb);
     })
       .send()
       .wait();
 
+  console.log("[after deposit]");
+  testDb.print();
+
+  const { nonce: snappNonce2 } = await Mina.getAccount(snappPubkey);
+  console.log("nonce: ", snappNonce2.toString());
+
+  await Mina.transaction(account2, async () => {
+      // transfer fund
+      const amount = UInt64.fromNumber(1000000000);
+
+      await snappInstance.transferToName(
+        SignatureWithName.create(account1, snappNonce2.toFields(), packBytes('Daniel.bit')), 
+        packBytes('Bob.bit'),
+        amount,
+        testDb
+      );
+    })
+      .send()
+      .wait();
+  
+  console.log("[after transferToName]");
+  testDb.print();
+
   const { nonce: snappNonce } = await Mina.getAccount(snappPubkey);
    console.log("nonce: ", snappNonce.toString());
 
   await Mina.transaction(account1, async () => {
-    // account2 sends 1000000000 to the new snapp account
+    // withdraw fund
     const amount = UInt64.fromNumber(1000000000);
     const receiver = Party.createUnsigned(account2.toPublicKey());
 
     await snappInstance.withdraw(
       receiver, 
-      packBytes('Daniel.bit'), 
+      packBytes('Bob.bit'), 
       amount,
-      SignatureWithSigner.create(account1, snappNonce.toFields()),
+      SignatureWithSigner.create(account2, snappNonce.toFields()),
       testDb
     );
   })
     .send()
     .wait();
 
+  
+
   const a = await Mina.getAccount(snappPubkey);
   console.log('final state value', a.snapp.appState[0].toString());
   
   const b = await Mina.getBalance(snappPubkey);
   console.log('snapp balance: ', b.toString());
+
+  console.log("[after withDraw]");
+  testDb.print();
 }
 
 run();
