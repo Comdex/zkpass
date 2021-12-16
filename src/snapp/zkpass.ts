@@ -233,11 +233,10 @@ export function validateAuth(s: SignatureWithName, msg: Field[],  accountDb: Acc
 
   let checkAccount = account.value.authKeyHash.equals(Poseidon.hash(s.signer.toFields())).toBoolean();
   if(verifySign && checkAccount) {
-    return true;
-  } else {
-    return false;
-  }
-
+     return true;
+  } 
+  
+  return false;
 }
 
 
