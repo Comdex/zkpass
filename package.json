@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "exec": "npx tsc && node --experimental-specifier-resolution=node dist/snapp/zkpass.js"
+    "exec": "npx tsc && node --experimental-specifier-resolution=node dist/snapp/local_test.js"
   },
   "repository": {
     "type": "git",
