@@ -1,31 +1,7 @@
 {
   "name": "zkpass",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "exec": "npx tsc && node --experimental-specifier-resolution=node dist/snapp/local_test.js",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Comdex/zkpass.git"
-  },
-  "keywords": ["mina", "zkpass"],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
-  "bugs": {
-    "url": "https://github.com/Comdex/zkpass/issues"
-  },
-  "engines": {
-    "node": ">=16.4.0"
-  },
-  "homepage": "https://github.com/Comdex/zkpass#readme",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
@@ -40,6 +16,12 @@
     "typescript": "^4.5.4",
     "web-vitals": "^2.1.2",
     "snarkyjs": "^0.1.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -59,5 +41,4 @@
       "last 1 safari version"
     ]
   }
-
 }
