@@ -11,6 +11,7 @@ import outlookLogo from '../img/social-logos/outlook-logo.PNG';
 import snapchatLogo from '../img/social-logos/snapchat-logo.PNG';
 import uportLogo from '../img/social-logos/uport-logo.PNG';
 import brightidLogo from '../img/social-logos/brightid-logo.PNG';
+import githubLogo from '../img/social-logos/github-logo.PNG';
 import Stack from '@mui/material/Stack';
 
 function getSocialDone(){
@@ -22,7 +23,8 @@ function getSocialDone(){
 function getSocialUnDone(){
     return {
         logoUrl: [dicordLogo, facebookLogo, twitterLogo, linkinLogo, 
-                    outlookLogo, snapchatLogo, uportLogo, brightidLogo]
+                    outlookLogo, snapchatLogo, uportLogo, brightidLogo,
+                    githubLogo]
     }
 }
 
@@ -43,6 +45,10 @@ export default function PrivateZoom() {
         <br/><br/>
         <Stack direction="row" spacing={2}>
         {socialLogoUnDoneList.logoUrl.slice(4, 8).map((item, index) => <div style={{cursor: 'pointer'}} key={index}><SocialAppBadge logoUrl={item}/></div>)}
+        </Stack>
+        <br/><br/>
+        <Stack direction="row" spacing={2}>
+        {socialLogoUnDoneList.logoUrl.slice(8).map((item, index) => <div style={{cursor: 'pointer'}} key={index}><SocialAppBadge logoUrl={item}/></div>)}
         </Stack>
     </div>
 }
