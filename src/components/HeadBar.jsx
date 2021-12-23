@@ -12,8 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 
-// const pages = ['Products', 'Pricing', 'Blog'];
-const pages = [];
+const pages = ['transfer', 'deposit', 'withdraw'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const ResponsiveAppBar = (props) => {
@@ -43,7 +42,7 @@ const ResponsiveAppBar = (props) => {
             variant="h6"
             noWrap
             component="div"
-            sx={{ mr: 2, display: { xs: 'none', md: 'flex'} }}
+            sx={{ mr: 10, display: { xs: 'none', md: 'flex'} }}
           >
             zkPass
           </Typography>
