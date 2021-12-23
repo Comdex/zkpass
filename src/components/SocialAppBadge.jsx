@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
-    backgroundColor: '#44b700',
+    backgroundColor: '#aaacaa',
     color: '#44b700',
     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
     '&::after': {
