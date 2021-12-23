@@ -31,7 +31,7 @@ function getSocialUnDone(){
 export default function PrivateZoom() {
     let socialLogoDoneList = getSocialDone();
     let socialLogoUnDoneList = getSocialUnDone();
-    return <div style={{left: '35%', position: 'absolute'}}>
+    return <div style={{left: '30%', position: 'absolute', width:'40%'}}>
         <ResponsiveAppBar />
         <h2>You have verified:</h2>
         <Stack direction="row" spacing={3}>
@@ -40,15 +40,11 @@ export default function PrivateZoom() {
         <br/>
         <h2>Choose to bind:</h2>
         <Stack direction="row" spacing={2}>
-        {socialLogoUnDoneList.logoUrl.slice(0, 4).map((item, index) => <div style={{cursor: 'pointer'}} key={index}><SocialAppBadge logoUrl={item}/></div>)}
+        {socialLogoUnDoneList.logoUrl.slice(0, 6).map((item, index) => <div style={{cursor: 'pointer'}} key={index}><SocialAppBadge logoUrl={item}/></div>)}
         </Stack>
         <br/><br/>
         <Stack direction="row" spacing={2}>
-        {socialLogoUnDoneList.logoUrl.slice(4, 8).map((item, index) => <div style={{cursor: 'pointer'}} key={index}><SocialAppBadge logoUrl={item}/></div>)}
-        </Stack>
-        <br/><br/>
-        <Stack direction="row" spacing={2}>
-        {socialLogoUnDoneList.logoUrl.slice(8).map((item, index) => <div style={{cursor: 'pointer'}} key={index}><SocialAppBadge logoUrl={item}/></div>)}
+        {socialLogoUnDoneList.logoUrl.slice(6, 9).map((item, index) => <div style={{cursor: 'pointer'}} key={index}><SocialAppBadge logoUrl={item}/></div>)}
         </Stack>
     </div>
 }

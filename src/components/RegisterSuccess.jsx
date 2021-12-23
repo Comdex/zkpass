@@ -12,14 +12,15 @@ const steps = [
 
 export default function RegisterSuccess() {
   return (
-      <div>
-      <Stepper activeStep={2} alternativeLabel>
+    <div style={{left: '25%', position: 'absolute', width:'50%'}}>
+      <Stepper activeStep={3} alternativeLabel>
         {steps.map((label) => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
           </Step>
         ))}
       </Stepper>
+      <br/>
       <div>
         <p>Congratulations! You got Your Unique Name in zkPass!</p>
         <p>Now, Please head to

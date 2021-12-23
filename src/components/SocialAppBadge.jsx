@@ -40,7 +40,7 @@ export default function SocialAppBadge(props) {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         variant="dot"
       >
-        <Avatar alt="Remy Sharp" src={props.logoUrl} sx={{ width: 80, height: 80   }}/>
+        <Avatar alt="Remy Sharp" src={props.logoUrl} sx={{ width: 90, height: 86   }}/>
       </StyledBadge>
   );
 }
