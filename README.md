@@ -28,5 +28,5 @@ Features:
 This is just a demo of a contract local test.
 
 ```sh
-npm run exec
+npm start
 ```
